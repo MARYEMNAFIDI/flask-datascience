@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .content-wrapper {
+    background: linear-gradient(to bottom, #1a0033, #2d0b59);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    position: relative;
+    overflow-x: hidden;
+    padding: 20px;
+  }
+
+  /* Formes ondulées décoratives */
+  .content-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(140, 80, 255, 0.25) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(300px, -300px);
+    z-index: 0;
+  }
+
+  .content-wrapper::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(180, 80, 220, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-200px, 200px);
+    z-index: 0;
+  }
+
+  .window {
+    background: linear-gradient(135deg, rgba(55, 20, 100, 0.85), rgba(35, 10, 80, 0.95));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 32px;
+    padding: 40px 50px;
+    width: 100%;
+    max-width: 100vw;
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(150, 100, 255, 0.2);
+    position: relative;
+    z-index: 2;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .title {
+    font-size: 38px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 8px;
+    background: linear-gradient(to right, #e0bbff, #bb86fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 30px;
+    line-height: 1.5;
+    color: #d0b0ff;
+  }
+
+  .container {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    border-radius: 24px;
+    padding: 30px;
+    flex: 1;
+    border: 1px solid rgba(200, 150, 255, 0.2);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    min-width: 0;
+  }
+
+  .card h3 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-left h3 {
+    color: #e0bbff;
+  }
+
+  .card-right h3 {
+    color: #ff9edc;
+    background: linear-gradient(90deg, #ff9edc, #ff6bb8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  .input-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  .input-group input,
+  .input-group select {
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(200,150,255,0.3);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: white;
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .input-group input::placeholder {
+    color: rgba(255,255,255,0.5);
+  }
+
+  .input-group select option {
+    background: #2d0b59;
+    color: white;
+  }
+
+  .input-group input:focus,
+  .input-group select:focus {
+    outline: none;
+    border-color: rgba(200, 150, 255, 0.6);
+    box-shadow: 0 0 12px rgba(180, 120, 255, 0.3);
+  }
+
+  .checkbox-group {
+    margin-bottom: 16px;
+  }
+
+  .checkbox-group > div:first-child {
+    margin-bottom: 10px;
+    opacity: 0.85;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 13px;
+  }
+
+  .checkbox-group label:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .checkbox-group input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  .btn-more {
+    width: 100%;
+    background: linear-gradient(90deg, #ffb340, #ff8c00);
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a0033;
+    cursor: pointer;
+    margin-top: 15px;
+    box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4);
+    transition: all 0.3s;
+  }
+
+  .btn-more:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 140, 0, 0.5);
+  }
+
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 14px;
+  }
+
+  .result-item strong {
+    color: #ff9edc;
+  }
+
+  .price-big {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin: 20px 0;
+    background: linear-gradient(90deg, #ff9edc, #ff6bb8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .info-box {
+    background: rgba(180, 100, 255, 0.15);
+    border: 1px solid rgba(200, 150, 255, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 12px;
+    margin-top: 15px;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+
+  .info-text {
+    font-size: 13px;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
+
+  .info-text p {
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 1200px) {
+    .window {
+      padding: 30px 35px;
+    }
+    .container {
+      gap: 25px;
+    }
+    .card {
+      padding: 22px;
+    }
+    .title {
+      font-size: 32px;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .container {
+      flex-direction: column;
+    }
+    .card {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="content-wrapper">
+  <div class="window">
+    <h1 class="title">Estimation Immobilière</h1>
+    <p class="subtitle">
+      Prédisez le prix de votre propriété à Casablanca | Intelligence Artificielle
+    </p>
+
+    <div class="container">
+      <!-- Carte gauche - Formulaire -->
+      <div class="card card-left">
+        <h3><i class="fas fa-home"></i> Détails</h3>
+        
+        <form method="post">
+          {% if error %}
+            <div style="background: rgba(200, 50, 50, 0.3); border: 1px solid rgba(255, 100, 100, 0.6); color: #ffcccc; padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 12px;">
+              ⚠️ {{ error }}
+            </div>
+          {% endif %}
+
+          <div class="input-group">
+            <label><i class="fas fa-ruler"></i> Surface (m²) *</label>
+            <input type="number" name="surface" step="0.1" placeholder="150" required>
+          </div>
+
+          <div class="input-group">
+            <label><i class="fas fa-door-open"></i> Chambres *</label>
+            <input type="number" name="chambres" step="1" placeholder="3" required>
+          </div>
+
+          <div class="input-group">
+            <label><i class="fas fa-bath"></i> Salles Bains *</label>
+            <input type="number" name="salles_de_bains" step="1" placeholder="2" required>
+          </div>
+
+          <div class="input-group">
+            <label><i class="fas fa-layer-group"></i> Étage</label>
+            <input type="number" name="floor" step="1" placeholder="3">
+          </div>
+
+          <div class="input-group">
+            <label><i class="fas fa-building"></i> Type *</label>
+            <select name="type_propriete" required>
+              <option value="">Sélectionner</option>
+              <option>Appartement</option>
+              <option>Villa</option>
+              <option>Studio</option>
+              <option>Maison</option>
+              <option>Duplex</option>
+            </select>
+          </div>
+
+          <div class="input-group">
+            <label><i class="fas fa-map-marker-alt"></i> Quartier *</label>
+            <select name="quartier" required>
+              <option value="">Sélectionner</option>
+              <option>2 Mars</option>
+              <option>Autre</option>
+              <option>Belvédère</option>
+              <option>Bourgogne Ouest</option>
+              <option>CIL</option>
+              <option>Californie</option>
+              <option>Farah Essalam</option>
+              <option>Ghandi</option>
+              <option>Les Hôpitaux</option>
+              <option>Les princesses</option>
+              <option>Mandarona</option>
+              <option>Riviera</option>
+            </select>
+          </div>
+
+          <div class="checkbox-group">
+            <div>✨ Commodités</div>
+            <label>
+              <input type="checkbox" name="ascenseur">
+              <span><i class="fas fa-arrow-up"></i> Ascenseur</span>
+            </label>
+            <label>
+              <input type="checkbox" name="terrasse">
+              <span><i class="fas fa-sun"></i> Terrasse</span>
+            </label>
+            <label>
+              <input type="checkbox" name="parking">
+              <span><i class="fas fa-car"></i> Parking</span>
+            </label>
+          </div>
+
+          <input name="city" type="hidden" value="Casablanca">
+
+          <button type="submit" class="btn-more">🔮 Estimer</button>
+        </form>
+      </div>
+
+      <!-- Carte droite - Informations -->
+      <div class="card card-right">
+        <h3><i class="fas fa-chart-bar"></i> Infos</h3>
+
+        <div class="result-item">
+          <span><i class="fas fa-database"></i> Données:</span>
+          <strong>3,179</strong>
+        </div>
+
+        <div class="result-item">
+          <span><i class="fas fa-cogs"></i> Facteurs:</span>
+          <strong>9</strong>
+        </div>
+
+        <div class="result-item">
+          <span><i class="fas fa-brain"></i> Algorithme:</span>
+          <strong>RandomForest</strong>
+        </div>
+
+        <div class="result-item">
+          <span><i class="fas fa-check-circle"></i> Précision:</span>
+          <strong>R²=1.0</strong>
+        </div>
+
+        <div class="price-big">
+          ~2.6M MAD
+        </div>
+
+        <div class="info-text">
+          <p><strong>📍</strong> 150 m² | 3 chambres</p>
+          <p><strong>🚿</strong> 2 SDB | Californie</p>
+          <p><strong>🏠</strong> Appartement</p>
+        </div>
+
+        <div class="info-box">
+          <strong>⚠️ Avertissement :</strong> Estimation basée sur le marché historique. Consultez un expert.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
